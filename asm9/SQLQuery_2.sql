@@ -66,3 +66,49 @@ values ('DK001', 'NCC001', 'DV01', 'Hiace', 'MP01', '2015-11-20', '2016-11-20', 
 ('DK025', 'NCC003', 'DV03', 'Hiace', 'MP02', '2016-08-24', '2017-10-25', 1);
 
 select * from asm9_DANGKYCUNGCAP;
+
+
+
+--TRUY VẤN--
+
+--3--
+select DongXe from asm9_DONGXE where SoChoNgoi > 5;
+
+--4--
+select distinct NCC.MaNhaCC, NCC.TenNhaCC, NCC.DiaChi, NCC.SoDT, NCC.MaSoThue from asm9_NHACUNGCAP NCC
+	inner join asm9_DANGKYCUNGCAP DKCC on DKCC.MaNhaCC = NCC.MaNhaCC
+	inner join asm9_DONGXE DX on DX.DongXe = DKCC.DongXe
+	inner join asm9_MUCPHI MP on MP.MaMP = DKCC.MaMP
+	where (DX.HangXe = 'Toyota' AND MP.DonGia = 15) OR (DX.HangXe = 'KIA' AND MP.DonGia = 20);
+
+--5--
+select * from asm9_NHACUNGCAP order by TenNhaCC asc, MaSoThue desc;
+
+--6--
+select NCC.TenNhaCC, count(DKCC.MaDKCC) as QtyDKCC from asm9_DANGKYCUNGCAP DKCC
+	inner join asm9_NHACUNGCAP NCC on DKCC.MaNhaCC = NCC.MaNhaCC
+	where DKCC.NgayBatDauCungCap = '2015-11-20'
+	group by NCC.TenNhaCC;
+
+--7--
+select distinct HangXe from asm9_DONGXE;
+
+--8--
+select DKCC.MaDKCC, NCC.MaNhaCC, NCC.TenNhaCC, NCC.DiaChi, NCC.MaSoThue, DV.TenLoaiDV, MP.DonGia, 
+	DX.HangXe, DKCC.NgayBatDauCungCap, DKCC.NgayKetThucCungCap from asm9_DANGKYCUNGCAP DKCC
+	full join asm9_NHACUNGCAP NCC on DKCC.MaNhaCC = NCC.MaNhaCC
+	full join asm9_DONGXE DX on DX.DongXe = DKCC.DongXe
+	full join asm9_MUCPHI MP on MP.MaMP = DKCC.MaMP
+	full join asm9_LOAIDICHVU DV on DV.MaLoaiDV = DKCC.MaLoaiDV;
+
+--9--
+select distinct NCC.MaNhaCC, NCC.TenNhaCC, NCC.DiaChi, NCC.SoDT, NCC.MaSoThue
+	from asm9_NHACUNGCAP NCC
+	inner join asm9_DANGKYCUNGCAP DKCC on DKCC.MaNhaCC = NCC.MaNhaCC
+	where DKCC.DongXe = 'Hiace' OR  DKCC.DongXe ='Cerato';
+
+--10--
+select distinct NCC.MaNhaCC, NCC.TenNhaCC, NCC.DiaChi, NCC.SoDT, NCC.MaSoThue
+	from asm9_NHACUNGCAP NCC
+	full join asm9_DANGKYCUNGCAP DKCC on DKCC.MaNhaCC = NCC.MaNhaCC
+	where NCC.MaNhaCC not in (DKCC.MaNhaCC);
