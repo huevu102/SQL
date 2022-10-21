@@ -75,11 +75,20 @@ select * from asm9_DANGKYCUNGCAP;
 select DongXe from asm9_DONGXE where SoChoNgoi > 5;
 
 --4--
-select distinct NCC.MaNhaCC, NCC.TenNhaCC, NCC.DiaChi, NCC.SoDT, NCC.MaSoThue from asm9_NHACUNGCAP NCC
+select distinct NCC.* from asm9_NHACUNGCAP NCC
 	inner join asm9_DANGKYCUNGCAP DKCC on DKCC.MaNhaCC = NCC.MaNhaCC
 	inner join asm9_DONGXE DX on DX.DongXe = DKCC.DongXe
 	inner join asm9_MUCPHI MP on MP.MaMP = DKCC.MaMP
 	where (DX.HangXe = 'Toyota' AND MP.DonGia = 15) OR (DX.HangXe = 'KIA' AND MP.DonGia = 20);
+
+select * from asm9_NHACUNGCAP where
+    MaNhaCC in (select MaNhaCC from asm9_DANGKYCUNGCAP where 
+        DongXe in (select DongXe from asm9_DONGXE where HangXe like 'Toyota')
+        and MaMP in (select MaMP from asm9_MUCPHI where DonGia = 15))
+    or 
+    MaNhaCC in (select MaNhaCC from asm9_DANGKYCUNGCAP where 
+        DongXe in (select DongXe from asm9_DONGXE where HangXe like 'KIA')
+        and MaMP in (select MaMP from asm9_MUCPHI where DonGia = 20));
 
 --5--
 select * from asm9_NHACUNGCAP order by TenNhaCC asc, MaSoThue desc;
@@ -87,8 +96,12 @@ select * from asm9_NHACUNGCAP order by TenNhaCC asc, MaSoThue desc;
 --6--
 select NCC.TenNhaCC, count(DKCC.MaDKCC) as QtyDKCC from asm9_DANGKYCUNGCAP DKCC
 	inner join asm9_NHACUNGCAP NCC on DKCC.MaNhaCC = NCC.MaNhaCC
-	where DKCC.NgayBatDauCungCap = '2015-11-20'
+	where DKCC.NgayBatDauCungCap >= '2015-11-20'
 	group by NCC.TenNhaCC;
+
+select MaNhaCC, count(*) from asm9_DANGKYCUNGCAP
+    where NgayBatDauCungCap >= '2015-11-20'
+    group by MaNhaCC;
 
 --7--
 select distinct HangXe from asm9_DONGXE;
@@ -101,14 +114,28 @@ select DKCC.MaDKCC, NCC.MaNhaCC, NCC.TenNhaCC, NCC.DiaChi, NCC.MaSoThue, DV.TenL
 	full join asm9_MUCPHI MP on MP.MaMP = DKCC.MaMP
 	full join asm9_LOAIDICHVU DV on DV.MaLoaiDV = DKCC.MaLoaiDV;
 
+select DKCC.MaDKCC, NCC.MaNhaCC, NCC.TenNhaCC, NCC.DiaChi, NCC.MaSoThue, DV.TenLoaiDV, MP.DonGia, 
+	DX.HangXe, DKCC.NgayBatDauCungCap, DKCC.NgayKetThucCungCap from asm9_DANGKYCUNGCAP DKCC
+	right join asm9_NHACUNGCAP NCC on DKCC.MaNhaCC = NCC.MaNhaCC
+	left join asm9_DONGXE DX on DX.DongXe = DKCC.DongXe
+	left join asm9_MUCPHI MP on MP.MaMP = DKCC.MaMP
+	left join asm9_LOAIDICHVU DV on DV.MaLoaiDV = DKCC.MaLoaiDV;
+
 --9--
 select distinct NCC.MaNhaCC, NCC.TenNhaCC, NCC.DiaChi, NCC.SoDT, NCC.MaSoThue
 	from asm9_NHACUNGCAP NCC
 	inner join asm9_DANGKYCUNGCAP DKCC on DKCC.MaNhaCC = NCC.MaNhaCC
 	where DKCC.DongXe = 'Hiace' OR  DKCC.DongXe ='Cerato';
 
+select * from asm9_NHACUNGCAP where MaNhaCC in (
+    select MaNhaCC from asm9_DANGKYCUNGCAP where DongXe in ('Hiace', 'Cerato')
+);
+
 --10--
 select distinct NCC.MaNhaCC, NCC.TenNhaCC, NCC.DiaChi, NCC.SoDT, NCC.MaSoThue
 	from asm9_NHACUNGCAP NCC
 	full join asm9_DANGKYCUNGCAP DKCC on DKCC.MaNhaCC = NCC.MaNhaCC
 	where DKCC.MaNhaCC is null;
+
+select * from asm9_NHACUNGCAP where MaNhaCC not in
+    (select MaNhaCC from asm9_DANGKYCUNGCAP);
