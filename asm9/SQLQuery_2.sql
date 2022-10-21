@@ -111,4 +111,4 @@ select distinct NCC.MaNhaCC, NCC.TenNhaCC, NCC.DiaChi, NCC.SoDT, NCC.MaSoThue
 select distinct NCC.MaNhaCC, NCC.TenNhaCC, NCC.DiaChi, NCC.SoDT, NCC.MaSoThue
 	from asm9_NHACUNGCAP NCC
 	full join asm9_DANGKYCUNGCAP DKCC on DKCC.MaNhaCC = NCC.MaNhaCC
-	where NCC.MaNhaCC not in (DKCC.MaNhaCC);
+	where DKCC.MaNhaCC is null;
