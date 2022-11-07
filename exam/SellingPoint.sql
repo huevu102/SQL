@@ -37,7 +37,7 @@ select * from Parts where CateID in
 --6
 create view v_Parts as
     select P.PartID, P.PartName, C.CateName, P.Price, P.Quantity from Parts P
-	inner join Categories C on P.CateID = C.CateID;
+	left join Categories C on P.CateID = C.CateID;
 
 select * from v_Parts;
 
